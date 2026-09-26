@@ -27,9 +27,17 @@ class LearnScreen extends StatelessWidget {
           leading: CircleAvatar(child: Text(lesson.$1)),
           title: Text(lesson.$2, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(lesson.$3),
-          trailing: Icon(lesson.$1 == '1' ? Icons.play_circle_fill_rounded : Icons.lock_outline_rounded),
-          onTap: lesson.$1 == '1' ? () => showPrototypeInfo(context, lesson.$2, 'The finished lesson teaches this with cards in your hand and explains each action as you play.') : null,
+          trailing: const Icon(Icons.play_circle_fill_rounded),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => GuidedLessonScreen(title: lesson.$2, topic: lesson.$3))),
         )),
+      const SizedBox(height: 8),
+      Card(child: ListTile(
+        leading: const Icon(Icons.menu_book_rounded, size: 32),
+        title: const Text('Quick Reference Guide', style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: const Text('Card values, melds, wild cards, threes, frozen pile, going out & scoring'),
+        trailing: const Icon(Icons.chevron_right_rounded),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuickReferenceScreen())),
+      )),
       const SizedBox(height: 16),
       FilledButton.icon(
         onPressed: () => showPrototypeInfo(context, 'Coached Practice', 'Hints stay available and explain why a move is legal or useful.'),
@@ -154,4 +162,49 @@ class _Stat extends StatelessWidget {
     Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
     Text(label, style: const TextStyle(fontSize: 11)),
   ]);
+}
+
+class GuidedLessonScreen extends StatelessWidget {
+  final String title, topic;
+  const GuidedLessonScreen({super.key, required this.title, required this.topic});
+  @override Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(title)),
+    body: SafeArea(child: LayoutBuilder(builder: (context, box) => ListView(
+      padding: EdgeInsets.symmetric(horizontal: box.maxWidth > 700 ? 48 : 18, vertical: 18),
+      children: [
+        Text(title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+        Text(topic, style: const TextStyle(fontSize: 17, color: Color(0xFFC9C4D2))),
+        const SizedBox(height: 20),
+        const Card(child: Padding(padding: EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('GUIDED PRACTICE TABLE', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFB46CFF))),
+          SizedBox(height: 10), Text('You will play this situation against computer-controlled seats. Endra explains legal moves, why they work, and lets you retry without affecting your stats.'),
+          SizedBox(height: 14), Row(children: [Icon(Icons.lightbulb_outline_rounded), SizedBox(width: 8), Expanded(child: Text('Hints stay available at every step.'))]),
+        ]))),
+        const SizedBox(height: 16),
+        FilledButton.icon(onPressed: () => showPrototypeInfo(context, 'Practice ready', 'The next engine milestone connects this lesson to a prepared playable hand.'), icon: const Icon(Icons.play_arrow_rounded), label: const Text('Start Guided Hand')),
+      ],
+    ))),
+  );
+}
+
+class QuickReferenceScreen extends StatelessWidget {
+  const QuickReferenceScreen({super.key});
+  @override Widget build(BuildContext context) {
+    const topics = [
+      ('Card values', 'Point values for every card and joker.'),
+      ('Initial meld', 'What your team needs to put down first.'),
+      ('Wild cards', 'How 2s and jokers can be used in melds.'),
+      ('Red & black threes', 'Special rules and scoring for threes.'),
+      ('Frozen discard pile', 'When it freezes and what is required to pick it up.'),
+      ('Natural vs. mixed Canastas', 'How each is formed and scored.'),
+      ('Going out', 'Requirements, partner permission and concealed going out.'),
+      ('Scoring', 'Canastas, cards, bonuses and penalties.'),
+    ];
+    return Scaffold(appBar: AppBar(title: const Text('Quick Reference')), body: ListView(padding: const EdgeInsets.all(18), children: [
+      const Text('Canasta at a glance', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+      const Text('Jump directly to the rule you need.'),
+      const SizedBox(height: 12),
+      for (final t in topics) Card(child: ListTile(title: Text(t.$1, style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text(t.$2), trailing: const Icon(Icons.chevron_right_rounded), onTap: () => showPrototypeInfo(context, t.$1, t.$2))),
+    ]));
+  }
 }
