@@ -12,9 +12,32 @@ class EndraCanastaApp extends StatelessWidget {
       title: 'Endra Canasta',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF76538F),
-          brightness: Brightness.dark,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF0C0910),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFFB46CFF),
+          secondary: Color(0xFFC9C4D2),
+          surface: Color(0xFF17121C),
+          outline: Color(0xFF9C94A6),
+        ),
+        cardTheme: CardThemeData(
+          color: const Color(0xE617121C),
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: Color(0xFF8D8298)),
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0C0910),
+          foregroundColor: Color(0xFFF2EDF7),
+          surfaceTintColor: Colors.transparent,
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFF6F2D91),
+            foregroundColor: Colors.white,
+          ),
         ),
         useMaterial3: true,
       ),
@@ -52,7 +75,7 @@ class HomeScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(18),
           children: [
-            const Text('Welcome back', style: TextStyle(fontSize: 15)),
+            const Text('Welcome, Kat', style: TextStyle(fontSize: 18, color: Color(0xFFC9C4D2))),
             const Text('What would you like to play?', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
             const SizedBox(height: 18),
             for (final item in destinations)
@@ -253,6 +276,6 @@ class _PlayingCard extends StatelessWidget {
     margin: const EdgeInsets.only(right: 5),
     padding: const EdgeInsets.all(6),
     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
-    child: Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: label.contains('♥') || label.contains('♦') ? Colors.red : Colors.black)),
+    child: Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: label.contains('♥') || label.contains('♦') ? const Color(0xFFB46CFF) : const Color(0xFFE7E2EC))),
   );
 }
