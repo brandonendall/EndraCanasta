@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'prototype_screens.dart';
 
 void main() => runApp(const EndraCanastaApp());
 
@@ -64,11 +65,15 @@ class HomeScreen extends StatelessWidget {
                   subtitle: Text(item.subtitle),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () {
-                    if (item.title == 'Casual Play') {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => const TablePreviewScreen()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${item.title} prototype is being connected.')));
-                    }
+                    final Widget screen = switch (item.title) {
+                      'Learn & Practice' => const LearnScreen(),
+                      'Competitive Play' => const CompetitiveScreen(),
+                      'Friends & Private Tables' => const FriendsScreen(),
+                      'Casual Play' => const TablePreviewScreen(),
+                      'Solo Play' => const TablePreviewScreen(),
+                      _ => const TablePreviewScreen(),
+                    };
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
                   },
                 ),
               ),
