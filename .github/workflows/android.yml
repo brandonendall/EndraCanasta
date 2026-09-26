@@ -19,8 +19,8 @@ jobs:
       - name: Apply Endra Canasta launcher icon
         run: |
           for d in android/app/src/main/res/mipmap-*dpi; do
-            rm -f "$d/ic_launcher.png"
-            cp assets/app_icon.jpg "$d/ic_launcher.jpg"
+            rm -f "$d/ic_launcher.png" "$d/ic_launcher.jpg"
+            cp assets/file_00000000d86c81f6abb580399b68e086.png "$d/ic_launcher.png"
           done
 
       - name: Get dependencies
