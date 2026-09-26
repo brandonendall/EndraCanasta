@@ -25,3 +25,5 @@ flutter_launcher_icons:
   adaptive_icon_background: "#0C0910"
   adaptive_icon_foreground: "assets/file_00000000d86c81f6abb580399b68e086.png"
   remove_alpha_ios: true
+
+# Build configuration validated for launcher icon generation.
