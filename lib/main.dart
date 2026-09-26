@@ -275,7 +275,7 @@ class _PlayingCard extends StatelessWidget {
     width: 54,
     margin: const EdgeInsets.only(right: 5),
     padding: const EdgeInsets.all(6),
-    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
+    decoration: BoxDecoration(color: const Color(0xFF100D14), borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFFC9C4D2))),
     child: Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: label.contains('♥') || label.contains('♦') ? const Color(0xFFB46CFF) : const Color(0xFFE7E2EC))),
   );
 }
