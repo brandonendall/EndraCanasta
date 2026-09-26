@@ -81,9 +81,9 @@ class FriendsScreen extends StatelessWidget {
       const Text('Your people', style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
       const Text('Find players you enjoyed instead of hoping to meet them again by chance.'),
       const SizedBox(height: 16),
-      _FriendTile(name: 'SarahM', status: 'Online · Favorite Partner', favorite: true),
-      _FriendTile(name: 'CardShark82', status: 'In Game'),
-      _FriendTile(name: 'MiaC', status: 'Away'),
+      const _FriendTile(name: 'SarahM', status: 'Online · Favorite Partner', favorite: true),
+      const _FriendTile(name: 'CardShark82', status: 'In Game'),
+      const _FriendTile(name: 'MiaC', status: 'Away'),
       const SizedBox(height: 16),
       FilledButton.icon(
         onPressed: () => showPrototypeInfo(context, 'Invite SarahM', 'SarahM receives a direct invitation. When she accepts, you take partner seats and can find two opponents.'),
