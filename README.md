@@ -1,5 +1,7 @@
 # Endra Canasta
 
+**Created by Kathryn — an original Endra project.**
+
 **Working title — Prototype 0.1**
 
 Endra Canasta is a modern, social, highly customizable Canasta experience designed for Android and iOS.
