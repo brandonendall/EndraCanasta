@@ -35,3 +35,8 @@ Current phase: **Prototype 0.1 — interaction and visual design**.
 ## Licensing
 
 No open-source license has been granted at this stage. All rights are reserved unless a license is added later.
+
+
+## Prototype builds
+
+Android debug builds are produced by GitHub Actions from the main branch. The workflow analyzes and tests the Flutter project before creating the APK artifact.
