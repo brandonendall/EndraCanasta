@@ -1,6 +1,6 @@
 # Endra Canasta
 
-**Created by Kathryn — an original Endra project.**
+**Created by Kat — an original Endra project.**
 
 **Working title — Prototype 0.1**
 
