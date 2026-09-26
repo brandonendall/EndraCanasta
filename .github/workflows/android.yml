@@ -16,15 +16,10 @@ jobs:
           cache: true
       - name: Create platform scaffolding
         run: flutter create --platforms=android,ios --org com.endra.prototype .
-      - name: Apply Endra Canasta launcher icon
-        run: |
-          for d in android/app/src/main/res/mipmap-*dpi; do
-            rm -f "$d/ic_launcher.png" "$d/ic_launcher.jpg"
-            cp assets/file_00000000d86c81f6abb580399b68e086.png "$d/ic_launcher.png"
-          done
-
       - name: Get dependencies
         run: flutter pub get
+      - name: Generate Endra Canasta launcher icons
+        run: dart run flutter_launcher_icons
       - name: Analyze
         run: flutter analyze
       - name: Test
