@@ -185,44 +185,335 @@ class _CustomizeScreenState extends State<CustomizeScreen> {
   );
 }
 
-class TablePreviewScreen extends StatelessWidget {
+class TablePreviewScreen extends StatefulWidget {
   const TablePreviewScreen({super.key});
-  void _info(BuildContext c, String title, String body) => showDialog(context: c, builder: (_) => AlertDialog(title: Text(title), content: Text(body), actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text('Close'))]));
-  @override Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Casual Game · Hand 3')),
-    body: SafeArea(child: LayoutBuilder(builder: (context, box) {
-      final tablet = box.maxWidth >= 700;
-      final cards = ['A♠','A♥','7♣','7♦','J♠','Q♥','2♣','5♦'];
-      final cardW = ((box.maxWidth - (tablet ? 64 : 24)) / cards.length).clamp(46.0, tablet ? 104.0 : 72.0);
-      final cardH = tablet ? 150.0 : 112.0;
-      return Container(
-        width: double.infinity, height: double.infinity,
-        padding: EdgeInsets.fromLTRB(tablet ? 20 : 8, 10, tablet ? 20 : 8, 10),
-        decoration: const BoxDecoration(gradient: RadialGradient(radius: 1.15, colors: [Color(0xFF35134E), Color(0xFF160D20), Color(0xFF09070C)])),
-        child: Column(children: [
-          const Row(children: [Expanded(child: _ScoreCard('YOUR TEAM','Kat + Sarah','2,480')), SizedBox(width: 8), Expanded(child: _ScoreCard('OPPONENTS','Mike + Jordan','2,150'))]),
-          SizedBox(height: tablet ? 16 : 8),
-          _PlayerSeat(name:'Sarah', detail:'Partner · 9 cards', active:false, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PartnerProfileScreen(name:'Sarah')))),
-          const Spacer(),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            _PlayerSeat(name:'Mike', detail:'11 cards', active:true, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PartnerProfileScreen(name:'Mike')))),
-            Column(children: [Icon(Icons.layers_rounded, size: tablet ? 52 : 38, color: const Color(0xFFC9C4D2)), const Text('DRAW · 38'), const SizedBox(height: 10), Icon(Icons.style_rounded, size: tablet ? 52 : 38, color: const Color(0xFFB46CFF)), const Text('DISCARD · 7')]),
-            _PlayerSeat(name:'Jordan', detail:'8 cards', active:false, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PartnerProfileScreen(name:'Jordan')))),
+
+  @override
+  State<TablePreviewScreen> createState() => _TablePreviewScreenState();
+}
+
+class _TablePreviewScreenState extends State<TablePreviewScreen> {
+  double cardScale = 1.0;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('ENDRA CANASTA', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1.1)),
+      actions: const [
+        _TableTopAction(Icons.person_rounded, 'Profile'),
+        _TableTopAction(Icons.groups_rounded, 'Players'),
+        _TableTopAction(Icons.chat_bubble_rounded, 'Messages'),
+        _TableTopAction(Icons.emoji_events_rounded, 'Stats'),
+      ],
+    ),
+    body: SafeArea(
+      child: LayoutBuilder(builder: (context, box) {
+        final compact = box.maxWidth < 600;
+        final hand = ['2♠','3♠','4♠','5♥','6♥','7♥','8♥','9♥','10♥','J♣','Q♣','K♣','A♦'];
+        final baseCardWidth = ((box.maxWidth - (compact ? 20 : 52)) / hand.length).clamp(36.0, 76.0);
+        final handCardWidth = baseCardWidth * cardScale;
+        final handCardHeight = handCardWidth * 1.42;
+        final meldCardWidth = (box.maxWidth * (compact ? .105 : .075)).clamp(38.0, 66.0);
+        final sideWidth = compact ? 54.0 : 92.0;
+
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: RadialGradient(
+              radius: 1.2,
+              colors: [Color(0xFF21102E), Color(0xFF08070A), Color(0xFF020203)],
+            ),
+          ),
+          child: Stack(children: [
+            const Positioned.fill(child: IgnorePointer(child: _HydraTableFrame())),
+            Column(children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(compact ? 8 : 18, 8, compact ? 8 : 18, 2),
+                child: const Row(children: [
+                  Expanded(child: _GameBadge('CASUAL CANASTA', '4 PLAYERS · FIRST TO 5,000')),
+                ]),
+              ),
+              Expanded(
+                child: Row(children: [
+                  SizedBox(width: sideWidth, child: const _EdgeSeat(name: 'Mike', score: '2,150')),
+                  Expanded(
+                    child: Column(children: [
+                      const SizedBox(height: 4),
+                      const _OpponentHand(),
+                      const SizedBox(height: 4),
+                      const _SeatBadge(name: 'Sarah', detail: 'Partner · 9 cards'),
+                      const Spacer(),
+                      const _MeldRow(
+                        groups: [
+                          ['8♠','8♥','8♣','8♦'],
+                          ['5♠','5♥','5♣','5♦'],
+                          ['K♠','K♥','K♣','K♦'],
+                        ],
+                      ),
+                      const Spacer(),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _PileCard(back: true, label: 'DRAW', count: '38'),
+                          SizedBox(width: 18),
+                          _PileCard(back: false, label: 'DISCARD', count: '7', face: 'Q♥'),
+                        ],
+                      ),
+                      const Spacer(),
+                      const _MeldRow(
+                        groups: [
+                          ['10♠','10♥','10♣','10♦'],
+                          ['J♠','J♥','J♣','J♦'],
+                          ['9♠','9♥','9♣','9♦'],
+                        ],
+                      ),
+                      const Spacer(),
+                      const _SeatBadge(name: 'Kat', detail: 'Your turn · 3,120'),
+                      const SizedBox(height: 4),
+                    ]),
+                  ),
+                  SizedBox(width: sideWidth, child: const _EdgeSeat(name: 'Jordan', score: '2,150')),
+                ]),
+              ),
+              SizedBox(
+                height: handCardHeight + 8,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(children: [
+                    for (final card in hand)
+                      _PlayingCard(card, width: handCardWidth, height: handCardHeight),
+                  ]),
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(compact ? 8 : 16, 8, compact ? 8 : 16, 10),
+                decoration: const BoxDecoration(
+                  color: Color(0xE608050B),
+                  border: Border(top: BorderSide(color: Color(0xFF7E32B5))),
+                ),
+                child: Row(children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: 'Type a message to the table…',
+                        prefixIcon: const Icon(Icons.chat_bubble_rounded),
+                        suffixIcon: IconButton(onPressed: () {}, icon: const Icon(Icons.send_rounded)),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text('Card Size', style: TextStyle(fontWeight: FontWeight.w700)),
+                  IconButton(
+                    tooltip: 'Smaller cards',
+                    onPressed: cardScale <= .78 ? null : () => setState(() => cardScale = (cardScale - .1).clamp(.75, 1.35)),
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                  SizedBox(
+                    width: compact ? 76 : 130,
+                    child: Slider(
+                      value: cardScale,
+                      min: .75,
+                      max: 1.35,
+                      divisions: 6,
+                      onChanged: (value) => setState(() => cardScale = value),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Larger cards',
+                    onPressed: cardScale >= 1.32 ? null : () => setState(() => cardScale = (cardScale + .1).clamp(.75, 1.35)),
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                ]),
+              ),
+            ]),
           ]),
-          const Spacer(),
-          const Text('YOUR HAND', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1)),
-          const SizedBox(height: 6),
-          SizedBox(height: cardH, width: double.infinity, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [for(final card in cards) _PlayingCard(card, width: cardW, height: cardH)])),
-          const SizedBox(height: 8),
-          Row(children: [
-            Expanded(child: FilledButton.icon(onPressed: () => _info(context,'Table Chat','Quick Chat: Good game! · Nice play! · Thank you!\n\nTyped chat and translation will appear here. You can mute individual players or the whole table.'), icon: const Icon(Icons.chat_rounded), label: const Text('Chat'))),
-            const SizedBox(width: 8),
-            Expanded(child: FilledButton.icon(onPressed: () => _info(context,'Score','Your Team  2,480\nOpponents  2,150\n\nHand details and Canasta bonuses will be shown here.'), icon: const Icon(Icons.scoreboard_rounded), label: const Text('Score'))),
-          ]),
-        ]),
-      );
-    })),
+        );
+      }),
+    ),
   );
+}
+
+class _TableTopAction extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _TableTopAction(this.icon, this.label);
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 3),
+    child: Tooltip(message: label, child: Icon(icon, size: 22)),
+  );
+}
+
+class _GameBadge extends StatelessWidget {
+  final String title;
+  final String detail;
+  const _GameBadge(this.title, this.detail);
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    decoration: BoxDecoration(
+      color: const Color(0xCC100A15),
+      border: Border.all(color: const Color(0xFF7E32B5)),
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+      const SizedBox(width: 10),
+      Flexible(child: Text(detail, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: Color(0xFFC9C4D2)))),
+    ]),
+  );
+}
+
+class _HydraTableFrame extends StatelessWidget {
+  const _HydraTableFrame();
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      border: Border.all(color: const Color(0xFF6F2D91), width: 3),
+      boxShadow: const [
+        BoxShadow(color: Color(0x887E32B5), blurRadius: 28, spreadRadius: 2),
+        BoxShadow(color: Color(0x557A5415), blurRadius: 12, spreadRadius: 1),
+      ],
+    ),
+    child: const Center(
+      child: Opacity(
+        opacity: .07,
+        child: Icon(Icons.local_fire_department_rounded, size: 260, color: Color(0xFFB46CFF)),
+      ),
+    ),
+  );
+}
+
+class _OpponentHand extends StatelessWidget {
+  const _OpponentHand();
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 52,
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      for (var i = 0; i < 10; i++)
+        Transform.translate(offset: Offset(i == 0 ? 0 : -i * 3.0, 0), child: const _CardBack(width: 34, height: 48)),
+    ]),
+  );
+}
+
+class _CardBack extends StatelessWidget {
+  final double width;
+  final double height;
+  const _CardBack({required this.width, required this.height});
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: width,
+    height: height,
+    margin: const EdgeInsets.symmetric(horizontal: 1),
+    decoration: BoxDecoration(
+      gradient: const RadialGradient(colors: [Color(0xFFB46CFF), Color(0xFF4D176B), Color(0xFF100A15)]),
+      borderRadius: BorderRadius.circular(6),
+      border: Border.all(color: const Color(0xFFE7D8F2), width: 1.2),
+      boxShadow: const [BoxShadow(color: Color(0x667E32B5), blurRadius: 7)],
+    ),
+    child: const Icon(Icons.local_fire_department_rounded, color: Color(0xFFE1B7FF), size: 20),
+  );
+}
+
+class _SeatBadge extends StatelessWidget {
+  final String name;
+  final String detail;
+  const _SeatBadge({required this.name, required this.detail});
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+    decoration: BoxDecoration(
+      color: const Color(0xE6100A15),
+      border: Border.all(color: const Color(0xFF8E5B24)),
+      borderRadius: BorderRadius.circular(18),
+    ),
+    child: Row(mainAxisSize: MainAxisSize.min, children: [
+      const CircleAvatar(radius: 11, backgroundColor: Color(0xFF6F2D91), child: Icon(Icons.person, size: 14)),
+      const SizedBox(width: 6),
+      Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+      const SizedBox(width: 6),
+      Text(detail, style: const TextStyle(fontSize: 10, color: Color(0xFFC9C4D2))),
+    ]),
+  );
+}
+
+class _EdgeSeat extends StatelessWidget {
+  final String name;
+  final String score;
+  const _EdgeSeat({required this.name, required this.score});
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: RotatedBox(
+      quarterTurns: name == 'Mike' ? 1 : 3,
+      child: _SeatBadge(name: name, detail: score),
+    ),
+  );
+}
+
+class _MeldRow extends StatelessWidget {
+  final List<List<String>> groups;
+  const _MeldRow({required this.groups});
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.scaleDown,
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      for (final group in groups) ...[
+        _VerticalMeld(cards: group),
+        const SizedBox(width: 14),
+      ],
+    ]),
+  );
+}
+
+class _VerticalMeld extends StatelessWidget {
+  final List<String> cards;
+  const _VerticalMeld({required this.cards});
+
+  @override
+  Widget build(BuildContext context) {
+    const width = 52.0;
+    const height = 74.0;
+    const overlap = 20.0;
+    return SizedBox(
+      width: width,
+      height: height + overlap * (cards.length - 1),
+      child: Stack(children: [
+        for (var i = 0; i < cards.length; i++)
+          Positioned(top: i * overlap, child: _PlayingCard(cards[i], width: width, height: height)),
+      ]),
+    );
+  }
+}
+
+class _PileCard extends StatelessWidget {
+  final bool back;
+  final String label;
+  final String count;
+  final String face;
+  const _PileCard({required this.back, required this.label, required this.count, this.face = ''});
+
+  @override
+  Widget build(BuildContext context) => Column(children: [
+    if (back)
+      const _CardBack(width: 54, height: 76)
+    else
+      _PlayingCard(face, width: 54, height: 76),
+    const SizedBox(height: 3),
+    Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+    Text(count, style: const TextStyle(fontSize: 10, color: Color(0xFFC9C4D2))),
+  ]);
 }
 
 class _ScoreCard extends StatelessWidget {
