@@ -462,7 +462,7 @@ class _EdgeSeat extends StatelessWidget {
 
 class _MeldRow extends StatelessWidget {
   final List<List<String>> groups;
-  _MeldRow({required this.groups});
+  const _MeldRow({required this.groups});
 
   @override
   Widget build(BuildContext context) => FittedBox(
