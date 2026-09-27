@@ -213,7 +213,6 @@ class _TablePreviewScreenState extends State<TablePreviewScreen> {
         final baseCardWidth = ((box.maxWidth - (compact ? 20 : 52)) / hand.length).clamp(36.0, 76.0);
         final handCardWidth = baseCardWidth * cardScale;
         final handCardHeight = handCardWidth * 1.42;
-        final meldCardWidth = (box.maxWidth * (compact ? .105 : .075)).clamp(38.0, 66.0);
         final sideWidth = compact ? 54.0 : 92.0;
 
         return Container(
@@ -244,7 +243,7 @@ class _TablePreviewScreenState extends State<TablePreviewScreen> {
                       const SizedBox(height: 4),
                       const _SeatBadge(name: 'Sarah', detail: 'Partner · 9 cards'),
                       const Spacer(),
-                      const _MeldRow(
+                      _MeldRow(
                         groups: [
                           ['8♠','8♥','8♣','8♦'],
                           ['5♠','5♥','5♣','5♦'],
@@ -261,7 +260,7 @@ class _TablePreviewScreenState extends State<TablePreviewScreen> {
                         ],
                       ),
                       const Spacer(),
-                      const _MeldRow(
+                      _MeldRow(
                         groups: [
                           ['10♠','10♥','10♣','10♦'],
                           ['J♠','J♥','J♣','J♦'],
@@ -463,7 +462,7 @@ class _EdgeSeat extends StatelessWidget {
 
 class _MeldRow extends StatelessWidget {
   final List<List<String>> groups;
-  const _MeldRow({required this.groups});
+  _MeldRow({required this.groups});
 
   @override
   Widget build(BuildContext context) => FittedBox(
@@ -514,20 +513,6 @@ class _PileCard extends StatelessWidget {
     Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
     Text(count, style: const TextStyle(fontSize: 10, color: Color(0xFFC9C4D2))),
   ]);
-}
-
-class _ScoreCard extends StatelessWidget {
-  final String title,names,score; const _ScoreCard(this.title,this.names,this.score);
-  @override Widget build(BuildContext context) => Card(child: Padding(padding: const EdgeInsets.symmetric(vertical:10,horizontal:8), child: Column(children:[Text(title,style:const TextStyle(fontSize:11,fontWeight:FontWeight.bold,color:Color(0xFFC9C4D2))),Text(names),Text(score,style:const TextStyle(fontSize:24,fontWeight:FontWeight.bold,color:Color(0xFFB46CFF)))])));
-}
-
-class _PlayerSeat extends StatelessWidget {
-  final String name,detail; final bool active; final VoidCallback onTap;
-  const _PlayerSeat({required this.name,required this.detail,required this.active,required this.onTap});
-  @override Widget build(BuildContext context) => InkWell(onTap:onTap,borderRadius:BorderRadius.circular(16),child:Container(
-    constraints: const BoxConstraints(minWidth:92), padding:const EdgeInsets.all(10),
-    decoration:BoxDecoration(color:const Color(0xCC17121C),border:Border.all(width:active?2:1,color:active?const Color(0xFFB46CFF):const Color(0xFF8D8298)),borderRadius:BorderRadius.circular(16),boxShadow:active?[const BoxShadow(color:Color(0x557E32B5),blurRadius:14)]:null),
-    child:Column(children:[const CircleAvatar(radius:25,backgroundColor:Color(0xFF6F2D91),child:Icon(Icons.person,size:30)),const SizedBox(height:4),Text(name,style:const TextStyle(fontWeight:FontWeight.bold,fontSize:16)),Text(detail,style:const TextStyle(fontSize:11))])));
 }
 
 class _PlayingCard extends StatelessWidget {
